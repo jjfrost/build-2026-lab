@@ -1,8 +1,22 @@
+#=== Start Block Settings =====================================================
+#Stage: First Displayable
+#Name: Build .env
+#Execute Script in Virtual Machine
+#Machine	Win11-Pro-Base-VM
+#Language	PowerShell
+#Blocking	Yes
+#Delay	10 Seconds
+#Timeout	30 Minutes
+#Retries	0
+#Error Action	Notify User
+#Error Notification	Build .env failed
+#=== End Block Settings =======================================================
+
 # =============================================================================
-# replace_tokens.ps1
+# Build .env
 # -----------------------------------------------------------------------------
 # Runs in the Skillable Lab Lifecycle (After VM Build) stage, AFTER
-# deployment_build2026.ps1 has completed its Bicep deployment.
+# deployment has completed its Bicep deployment.
 #
 # This script:
 #   1. Receives Skillable @lab tokens (subscription, RG, AAD user, SP creds).
@@ -11,6 +25,7 @@
 #   3. Reads the outputs of the most recent successful ARM deployment in the
 #      resource group (produced by infra5/deploy.bicep), specifically:
 #         - clusterFqdn                        -> AZURE_PG_HOST
+#         - clusterFqdnReadOnly                -> AZURE_PG_HOST_READONLY
 #         - adminLogin (labUser)               -> AZURE_PG_USER
 #         - adminPassword (auto-generated)     -> AZURE_PG_PASSWORD
 #         - azureOpenAIEndpoint                -> AZURE_OPENAI_ENDPOINT
@@ -25,11 +40,9 @@
 $ErrorActionPreference = "Stop"
 
 # ---------- Logging ----------------------------------------------------------
-# Logs live OUTSIDE of C:\Lab so the clone target can be wiped freely without
-# losing diagnostic output.
 $logDir = 'C:\Logs'
 if (-not (Test-Path $logDir)) { New-Item -ItemType Directory -Path $logDir -Force | Out-Null }
-$logFile = Join-Path $logDir ("replace_tokens_{0:yyyyMMdd_HHmmss}.log" -f (Get-Date))
+$logFile = Join-Path $logDir ("build_env_{0:yyyyMMdd_HHmmss}.log" -f (Get-Date))
 
 function Write-Log {
     param([string]$Message)
@@ -99,20 +112,22 @@ function Get-Output($obj, $name) {
     return $obj.$name.value
 }
 
-$postgresHost        = Get-Output $outputs 'clusterFqdn'
-$pgAdminLogin        = Get-Output $outputs 'adminLogin'
-$pgAdminPassword     = Get-Output $outputs 'adminPassword'
-$openaiEndpoint      = Get-Output $outputs 'azureOpenAIEndpoint'
-$openaiResourceName  = Get-Output $outputs 'azureOpenAIServiceName'
-$gptDeploymentName   = Get-Output $outputs 'azureOpenAIChatDeploymentName'
-$embedDeploymentName = Get-Output $outputs 'azureOpenAIEmbeddingDeploymentName'
+$postgresHost         = Get-Output $outputs 'clusterFqdn'
+$postgresHostReadOnly = Get-Output $outputs 'clusterFqdnReadOnly'
+$pgAdminLogin         = Get-Output $outputs 'adminLogin'
+$pgAdminPassword      = Get-Output $outputs 'adminPassword'
+$openaiEndpoint       = Get-Output $outputs 'azureOpenAIEndpoint'
+$openaiResourceName   = Get-Output $outputs 'azureOpenAIServiceName'
+$gptDeploymentName    = Get-Output $outputs 'azureOpenAIChatDeploymentName'
+$embedDeploymentName  = Get-Output $outputs 'azureOpenAIEmbeddingDeploymentName'
 
-Write-Log "HorizonDB host:    $postgresHost"
-Write-Log "HorizonDB user:    $pgAdminLogin"
-Write-Log "OpenAI account:    $openaiResourceName"
-Write-Log "OpenAI endpoint:   $openaiEndpoint"
-Write-Log "GPT deployment:    $gptDeploymentName"
-Write-Log "Embed deployment:  $embedDeploymentName"
+Write-Log "HorizonDB host:             $postgresHost"
+Write-Log "HorizonDB host (read-only): $postgresHostReadOnly"
+Write-Log "HorizonDB user:             $pgAdminLogin"
+Write-Log "OpenAI account:             $openaiResourceName"
+Write-Log "OpenAI endpoint:            $openaiEndpoint"
+Write-Log "GPT deployment:             $gptDeploymentName"
+Write-Log "Embed deployment:           $embedDeploymentName"
 
 # ================== Fetch Azure OpenAI key ===================================
 Write-Log "Fetching Azure OpenAI account key..."
@@ -132,6 +147,7 @@ AZURE_API_VERSION       = "2025-03-01-preview"
 
 # Database Configuration
 AZURE_PG_HOST           = "$postgresHost"
+AZURE_PG_HOST_READONLY  = "$postgresHostReadOnly"
 AZURE_PG_NAME           = "postgres"
 AZURE_PG_USER           = "$pgAdminLogin"
 AZURE_PG_PASSWORD       = "$pgAdminPassword"

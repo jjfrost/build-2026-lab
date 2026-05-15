@@ -1,3 +1,15 @@
+#=== Start Block Settings =====================================================
+#Stage: Pre-Build
+#Name: Register Resource Providers
+#Execute Script in Cloud Platform
+#Language	PowerShell
+#Blocking	No
+#Delay	10 Seconds
+#Timeout	10 Minutes
+#Retries	2
+#Error Action	Log
+#=== End Block Settings =======================================================
+
 $ResourceProviders = @(
     'Microsoft.CognitiveServices',
     'Microsoft.DBforPostgreSQL',

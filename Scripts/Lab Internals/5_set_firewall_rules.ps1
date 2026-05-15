@@ -1,3 +1,17 @@
+#=== Start Block Settings =====================================================
+#Stage: First Displayable
+#Name: Set HorizonDB Firewall Rules
+#Execute Script in Virtual Machine
+#Machine	Win11-Pro-Base-VM
+#Language	PowerShell
+#Blocking	Yes
+#Delay	10 Seconds
+#Timeout	20 Minutes
+#Retries	0
+#Error Action	Notify User
+#Error Notification	Set HorizonDB Firewall Rules failed
+#=== End Block Settings =======================================================
+
 # =============================================================================
 # Set HorizonDB Firewall Rules
 # -----------------------------------------------------------------------------
@@ -22,7 +36,7 @@ $ErrorActionPreference = "Stop"
 # ---------- Logging ----------------------------------------------------------
 $logDir = 'C:\Logs'
 if (-not (Test-Path $logDir)) { New-Item -ItemType Directory -Path $logDir -Force | Out-Null }
-$logFile = Join-Path $logDir ("post_deploy_{0:yyyyMMdd_HHmmss}.log" -f (Get-Date))
+$logFile = Join-Path $logDir ("set_horizondb_firewall_rules_{0:yyyyMMdd_HHmmss}.log" -f (Get-Date))
 
 function Write-Log {
     param([string]$Message)

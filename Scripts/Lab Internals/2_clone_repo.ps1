@@ -1,3 +1,17 @@
+#=== Start Block Settings =====================================================
+#Stage: First Displayable
+#Name: Clone Repo
+#Execute Script in Virtual Machine
+#Machine	Win11-Pro-Base-VM
+#Language	PowerShell
+#Blocking	Yes
+#Delay	40 Seconds
+#Timeout	30 Minutes
+#Retries	0
+#Error Action	Notify User
+#Error Notification	Clone Repo failed
+#=== End Block Settings =======================================================
+
 # =============================================================================
 # Clone Repo
 # -----------------------------------------------------------------------------
@@ -56,7 +70,7 @@ if (Test-Path $targetDir) {
 # ================== Configuration ============================================
 $repoUrl      = "https://github.com/jjfrost/build-2026-lab"
 $tempRoot     = "C:\LabTemp"
-$maxAttempts  = 5
+$maxAttempts  = 10
 $initialDelay = 5     # seconds; doubles each retry
 $cloneTimeout = 600   # seconds; per-attempt safety net
 

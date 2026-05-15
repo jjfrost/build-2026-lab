@@ -1,7 +1,21 @@
+#=== Start Block Settings =====================================================
+#Stage: First Displayable
+#Name: Bicep Deployment
+#Execute Script in Virtual Machine
+#Machine	Win11-Pro-Base-VM
+#Language	PowerShell
+#Blocking	Yes
+#Delay	60 Seconds
+#Timeout	1 Hour
+#Retries	0
+#Error Action	Notify User
+#Error Notification	Bicep Deployment failed
+#=== End Block Settings =======================================================
+
 # Define log file path 
-$logDir = 'C:\Lab\Logs'
+$logDir = 'C:\Logs'
 if (-not (Test-Path $logDir)) { New-Item -ItemType Directory -Path $logDir | Out-Null }
-$logFile = Join-Path $logDir ("lab-log_{0:yyyyMMdd_HHmmss}.log" -f (Get-Date))
+$logFile = Join-Path $logDir ("bicep-deployment-log_{0:yyyyMMdd_HHmmss}.log" -f (Get-Date))
 
 # Simple helper function for logging
 function Write-Log {
@@ -10,7 +24,7 @@ function Write-Log {
   "$timestamp $Message" | Out-File -FilePath $logFile -Append -Encoding UTF8
 }
 
-Write-Log "==== Script start ===="
+Write-Log "==== Bicep Deployment start ===="
 
 # ================== Inputs (Skillable tokens) ==================
 $clientId             = "@lab.CloudSubscription.AppId"
@@ -215,8 +229,8 @@ try {
       Write-Log "==== Deployment succeeded ===="
       Write-Host "Deployment completed successfully!" -ForegroundColor Green
       
-      $serverName = $status.properties.outputs.serverName.value
-      Write-Log "PostgreSQL Server Name: $serverName"
+      $clusterName = $status.properties.outputs.clusterName.value
+      Write-Log "PostgreSQL Server Name: $clusterName"
       break
     }
     
@@ -281,4 +295,4 @@ try {
   throw
 }
 
-Write-Log "==== Script end ===="
+Write-Log "==== Bicep Deployment end ===="
