@@ -1,11 +1,14 @@
+@description('Random suffix used to keep resource names unique per deployment.')
+param nameSuffix string = uniqueString(newGuid())
+
 @description('Location for all resources.')
 param location string = resourceGroup().location
 
 @description('Unique name for the HorizonDB cluster.')
-param clusterName string = 'horizondb-learn-${uniqueString(resourceGroup().id)}'
+param clusterName string = 'horizondb-lab-${resourceGroup().location}-${nameSuffix}'
 
 @description('Unique name for the Azure OpenAI service.')
-param azureOpenAIServiceName string = 'oai-learn-${resourceGroup().location}-${uniqueString(resourceGroup().id)}'
+param azureOpenAIServiceName string = 'openai-lab-${resourceGroup().location}-${nameSuffix}'
 
 @description('Restore the service instead of creating a new instance. This is useful if you previously soft-deleted the service and want to restore it. If you are restoring a service, set this to true. Otherwise, leave this as false.')
 param restore bool = false
