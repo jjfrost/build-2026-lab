@@ -108,7 +108,7 @@ resource azureOpenAIChatDeployment 'Microsoft.CognitiveServices/accounts/deploym
 
 output clusterName string = horizonDbCluster.name
 output clusterFqdn string = horizonDbCluster.properties.?fullyQualifiedDomainName ?? '${clusterName}.${location}.horizondb.azure.com'
-output clusterFqdnReadOnly string = horizonDbCluster.properties.?fullyQualifiedDomainName ?? '${clusterName}.ro.${location}.horizondb.azure.com'
+output clusterFqdnReadOnly string = horizonDbCluster.properties.?readonlyEndpoint ?? '${clusterName}.ro.${location}.horizondb.azure.com'
 output adminLogin string = administratorLogin
 output adminPassword string = administratorLoginPassword
 
