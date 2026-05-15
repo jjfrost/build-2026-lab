@@ -1,1 +1,1 @@
-az deployment group create --resource-group "jfrost-lab511-test11" --template-file "C:\dev\repos\build-2026-lab\Infra\deploy.bicep" --parameters restore=false --verbose
+az deployment group create --resource-group "" --template-file "deploy.bicep" --parameters restore=false --verbose
