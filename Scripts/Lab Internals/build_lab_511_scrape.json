@@ -1,0 +1,20 @@
+{
+    "value": [
+        {
+            "id": "/subscriptions/3a17940d-343c-4116-bee4-208e75cced7a/resourceGroups/ResourceGroup1/providers/Microsoft.CognitiveServices/accounts/oai-learn-australiaeast-fv5vnr7dyldja",
+            "name": "oai-learn-australiaeast-fv5vnr7dyldja",
+            "type": "Microsoft.CognitiveServices/accounts",
+            "sku": {
+                "name": "S0"
+            },
+            "kind": "OpenAI",
+            "location": "australiaeast"
+        },
+        {
+            "id": "/subscriptions/3a17940d-343c-4116-bee4-208e75cced7a/resourceGroups/ResourceGroup1/providers/Microsoft.HorizonDb/clusters/horizondb-learn-fv5vnr7dyldja",
+            "name": "horizondb-learn-fv5vnr7dyldja",
+            "type": "Microsoft.HorizonDb/clusters",
+            "location": "australiaeast"
+        }
+    ]
+}

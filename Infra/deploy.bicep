@@ -68,7 +68,7 @@ resource azureOpenAIEmbeddingDeployment 'Microsoft.CognitiveServices/accounts/de
   parent: azureOpenAIService
   sku: {
     name: 'GlobalStandard'
-    capacity: 1000
+    capacity: 100
   }
   properties: {
     model: {
@@ -80,23 +80,23 @@ resource azureOpenAIEmbeddingDeployment 'Microsoft.CognitiveServices/accounts/de
   }
 }
 
-@description('Creates a GPT-4o chat deployment for the Azure OpenAI service.')
+@description('Creates a GPT-5 chat deployment for the Azure OpenAI service.')
 resource azureOpenAIChatDeployment 'Microsoft.CognitiveServices/accounts/deployments@2023-05-01' = {
-  name: 'gpt-4o'
+  name: 'gpt-5'
   parent: azureOpenAIService
   dependsOn: [
     azureOpenAIEmbeddingDeployment
   ]
   sku: {
     name: 'GlobalStandard'
-    capacity: 1000
+    capacity: 100
   }
   properties: {
     model: {
-      name: 'gpt-4o'
-      version: '2024-11-20'
+      name: 'gpt-5'
+      version: '2025-08-07'
       format: 'OpenAI'
-    }    
+    }
   }
 }
 
