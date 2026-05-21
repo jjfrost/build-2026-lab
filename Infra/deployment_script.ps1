@@ -1,1 +1,0 @@
-az deployment group create --resource-group "" --template-file "deploy.bicep" --parameters restore=false --verbose

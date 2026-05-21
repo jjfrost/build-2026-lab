@@ -1,0 +1,1 @@
+az deployment group create --resource-group "jfrost-horizondb-test-20" --template-file "deploy-hdb.bicep" --debug
