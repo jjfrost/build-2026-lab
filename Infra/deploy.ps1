@@ -1,1 +1,8 @@
-az deployment group create --resource-group "jfrost-horizondb-test-20" --template-file "deploy-hdb.bicep" --debug
+param(
+    [Parameter(Mandatory)]
+    [string]$ResourceGroup,
+
+    [string]$TemplateFile = "deploy-hdb.bicep"
+)
+
+az deployment group create --resource-group $ResourceGroup --template-file $TemplateFile --debug

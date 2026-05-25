@@ -12,8 +12,14 @@
 #Error Notification	Bicep Deployment failed
 #=== End Block Settings =======================================================
 
+param(
+    [string]$LogDir  = 'C:\Logs',
+    [string]$LabDir  = 'C:\Lab',
+    [string]$TempDir = $env:TEMP
+)
+
 # Define log file path 
-$logDir = 'C:\Logs'
+$logDir = $LogDir
 if (-not (Test-Path $logDir)) { New-Item -ItemType Directory -Path $logDir | Out-Null }
 $logFile = Join-Path $logDir ("bicep-deployment-log_{0:yyyyMMdd_HHmmss}.log" -f (Get-Date))
 
@@ -35,7 +41,7 @@ $rgName               = "@lab.CloudResourceGroup(ResourceGroup1).Name"
 $aadUserPrincipalName = "@lab.CloudPortalCredential(User1).Username"
 
 # Your Bicep file
-$bicepPath      = "C:\Lab\Infra\deploy.bicep"
+$bicepPath      = Join-Path $LabDir "Infra\deploy.bicep"
 # Where to write compiled JSON
 $templateJson   = [System.IO.Path]::ChangeExtension($bicepPath, ".json")
 
@@ -44,7 +50,7 @@ $tplParams      = @{ restore = $false }
 
 # ================== Fast, deterministic environment ==================
 $ErrorActionPreference = 'Stop'
-$env:AZURE_CONFIG_DIR = "C:\Temp\.azure"
+$env:AZURE_CONFIG_DIR = Join-Path $TempDir ".azure"
 if (-not (Test-Path $env:AZURE_CONFIG_DIR)) { New-Item -ItemType Directory -Force $env:AZURE_CONFIG_DIR | Out-Null }
 netsh winhttp reset proxy | Out-Null
 Remove-Item Env:HTTPS_PROXY, Env:HTTP_PROXY, Env:ALL_PROXY, Env:NO_PROXY -ErrorAction SilentlyContinue
@@ -64,12 +70,12 @@ function Compile-Bicep {
     $env:AZURE_BICEP_USE_BINARY_FROM_PATH = "false"
     $env:AZURE_CORE_ONLY_SHOW_ERRORS = "true"
     
-    if (-not (Test-Path "C:\Temp")) { New-Item -ItemType Directory -Path "C:\Temp" -Force | Out-Null }
+    if (-not (Test-Path $TempDir)) { New-Item -ItemType Directory -Path $TempDir -Force | Out-Null }
     
     # FIX: Use unique file IDs to prevent background processes from locking the text files
     $tempId = [guid]::NewGuid().ToString().Substring(0,8)
-    $outLog = "C:\Temp\bicep_stdout_$tempId.txt"
-    $errLog = "C:\Temp\bicep_stderr_$tempId.txt"
+    $outLog = Join-Path $TempDir "bicep_stdout_$tempId.txt"
+    $errLog = Join-Path $TempDir "bicep_stderr_$tempId.txt"
     
     $azProcess = Start-Process -FilePath "az" `
       -ArgumentList "bicep","build","--file",$BicepPath,"--outfile",$OutJson,"--only-show-errors" `

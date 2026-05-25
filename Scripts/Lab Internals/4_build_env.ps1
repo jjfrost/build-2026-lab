@@ -37,10 +37,15 @@
 #      matching the canonical format used by the lab notebook.
 # =============================================================================
 
+param(
+    [string]$LogDir = 'C:\Logs',
+    [string]$LabDir = 'C:\Lab'
+)
+
 $ErrorActionPreference = "Stop"
 
 # ---------- Logging ----------------------------------------------------------
-$logDir = 'C:\Logs'
+$logDir = $LogDir
 if (-not (Test-Path $logDir)) { New-Item -ItemType Directory -Path $logDir -Force | Out-Null }
 $logFile = Join-Path $logDir ("build_env_{0:yyyyMMdd_HHmmss}.log" -f (Get-Date))
 
@@ -156,7 +161,7 @@ AZURE_PG_SSLMODE        = "require"
 "@
 
 # ================== Write .env ===============================================
-$envDir = 'C:\Lab'
+$envDir = $LabDir
 if (-not (Test-Path $envDir)) { New-Item -ItemType Directory -Path $envDir -Force | Out-Null }
 $envFilePath = Join-Path $envDir '.env'
 
