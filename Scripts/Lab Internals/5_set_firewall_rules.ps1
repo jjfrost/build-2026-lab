@@ -31,10 +31,14 @@
 #         - AllowAll           (0.0.0.0 / 255.255.255.255)  [lab use only]
 # =============================================================================
 
+param(
+    [string]$LogDir = 'C:\Logs'
+)
+
 $ErrorActionPreference = "Stop"
 
 # ---------- Logging ----------------------------------------------------------
-$logDir = 'C:\Logs'
+$logDir = $LogDir
 if (-not (Test-Path $logDir)) { New-Item -ItemType Directory -Path $logDir -Force | Out-Null }
 $logFile = Join-Path $logDir ("set_horizondb_firewall_rules_{0:yyyyMMdd_HHmmss}.log" -f (Get-Date))
 
