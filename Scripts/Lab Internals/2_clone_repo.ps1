@@ -28,12 +28,19 @@
 #      are no longer silent.
 # =============================================================================
 
+param(
+    [string]$LogDir   = 'C:\Logs',
+    [string]$LabDir   = 'C:\Lab',
+    [string]$TempRoot = 'C:\LabTemp',
+    [string]$RepoUrl  = 'https://github.com/jjfrost/build-2026-lab'
+)
+
 $ErrorActionPreference = "Stop"
 
 # ---------- Logging ----------------------------------------------------------
-# Logs live OUTSIDE of C:\Lab so the clone target can be wiped freely without
+# Logs live OUTSIDE of the lab dir so the clone target can be wiped freely without
 # losing diagnostic output.
-$logDir = 'C:\Logs'
+$logDir = $LogDir
 if (-not (Test-Path $logDir)) { New-Item -ItemType Directory -Path $logDir -Force | Out-Null }
 $logFile = Join-Path $logDir ("clone_repo_{0:yyyyMMdd_HHmmss}.log" -f (Get-Date))
 
@@ -47,7 +54,7 @@ function Write-Log {
 Write-Log "==== Clone Repo start ===="
 
 # ---------- Wipe target for a clean clone -----------------------------------
-$targetDir = "C:\Lab"
+$targetDir = $LabDir
 if (Test-Path $targetDir) {
     Write-Log "Existing $targetDir found. Removing for a clean clone..."
     try {
@@ -68,8 +75,8 @@ if (Test-Path $targetDir) {
 }
 
 # ================== Configuration ============================================
-$repoUrl      = "https://github.com/jjfrost/build-2026-lab"
-$tempRoot     = "C:\LabTemp"
+$repoUrl      = $RepoUrl
+$tempRoot     = $TempRoot
 $maxAttempts  = 10
 $initialDelay = 5     # seconds; doubles each retry
 $cloneTimeout = 600   # seconds; per-attempt safety net

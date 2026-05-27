@@ -2,3 +2,8 @@
 .env
 .env.*
 !.env.sample
+.vscode/
+.vale/styles/*
+!.vale/styles/.gitkeep
+!.vale/styles/config/
+!.vale/styles/config/**
