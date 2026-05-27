@@ -47,12 +47,10 @@ The lab is intentionally hands-on: every concept is paired with a runnable noteb
 │   ├── 2-app-development.ipynb   # Notebook 2: build the 5-tool agent + Mem0 + Gradio UI
 │   └── 3-diagnostics.ipynb       # Diagnostics / troubleshooting helpers
 ├── Dataset/
-│   └── cases.csv                 # U.S. case-law dataset used throughout the lab
+│   └── cases.csv                 # U.S. case law dataset used throughout the lab
 ├── Docs/                         # Lab documentation and architecture images
 ├── Infra/
-│   ├── deploy-hdb.bicep          # Bicep template for the HorizonDB instance
-│   ├── deploy.bicep              # Top-level Bicep template (full lab environment)
-│   └── deploy.ps1                # PowerShell wrapper for the deployment
+│   └── deploy.bicep              # Top-level Bicep template (full lab environment)
 └── Scripts/
     ├── show_graph.sql            # Sample SQL for inspecting the AGE citation graph
     └── Lab Internals/            # Scripts used to build and validate the lab VM image
@@ -102,6 +100,7 @@ Each tool is introduced, smoke-tested by hand, and then handed to the agent so y
 1. **Flagship run** (Part 3.7): all five tools registered together with a beefed-up system prompt, producing a real legal brief.
 1. **Long-term memory with Mem0** (Part 3.8): wire Mem0 to pgvector in HorizonDB so the agent remembers client details and preferences across turns.
 1. **Gradio web UI** (Part 3.9): wrap the full 5-tool + Mem0 agent in a Gradio chat app with a live Tool Trace panel and a Long-term Memory panel.
+1. **Forced failover simulation** (Part 3.10): trigger a HorizonDB forced failover from the Azure portal while the Gradio app is running and watch the `_memory_search_with_retry` helper ride out the primary-to-standby promotion with no user-visible errors.
 
 ### Notebook 3: Diagnostics ([Code/3-diagnostics.ipynb](Code/3-diagnostics.ipynb))
 
@@ -111,7 +110,7 @@ Optional troubleshooting cells: verify connectivity, inspect extension state, re
 
 1. Open [Code/1-data-setup.ipynb](Code/1-data-setup.ipynb) in VS Code and work through every cell top to bottom. Each cell pairs a `🧠 Technical Background Notes` block with a `📝 Tasks` checklist so you always know what to look at.
 1. Once Notebook 1 finishes successfully, open [Code/2-app-development.ipynb](Code/2-app-development.ipynb) and do the same.
-1. In Part 3.9 (the last section of Notebook 2), running the final cell launches the Gradio UI on [http://localhost:7860](http://localhost:7860). Open it in a browser and chat with your finished agent.
+1. In Part 3.9, running the final cell launches the Gradio UI on [http://localhost:7860](http://localhost:7860). Open it in a browser and chat with your finished agent.
 
 ## Additional Resources
 
