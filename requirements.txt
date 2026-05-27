@@ -3,7 +3,7 @@ jupyter
 ipywidgets==8.1.8
 uvicorn<0.34
 nest_asyncio==1.6.0
-psycopg[binary]==3.2.12
+psycopg[binary,pool]==3.2.12
 openai==2.36.0
 python-dotenv==1.2.1
 pydantic==2.12.3
