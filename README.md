@@ -40,6 +40,8 @@ The lab is intentionally hands-on: every concept is paired with a runnable noteb
 
 ```
 ├── LICENSE                       # MIT License
+├── .env.sample                   # Sample environment variables for local runs
+├── azure.yaml                    # azd project definition + hooks
 ├── requirements.txt              # Python package dependencies for the lab
 ├── README.md                     # This file
 ├── Code/
@@ -50,8 +52,13 @@ The lab is intentionally hands-on: every concept is paired with a runnable noteb
 │   └── cases.csv                 # U.S. case law dataset used throughout the lab
 ├── Docs/                         # Lab documentation and architecture images
 ├── Infra/
-│   └── deploy.bicep              # Top-level Bicep template (full lab environment)
+│   ├── deploy.bicep              # Top-level Bicep template (full lab environment)
+│   └── main.bicep                # azd entrypoint template + env-friendly outputs
 └── Scripts/
+  ├── azd/                      # Cross-platform azd post-provision hooks
+  │   ├── postprovision.ps1     # Windows: builds the local .env file
+  │   └── postprovision.sh      # macOS/Linux: builds the local .env file
+  ├── Diagnostics/              # Optional troubleshooting SQL/scripts
     ├── show_graph.sql            # Sample SQL for inspecting the AGE citation graph
     └── Lab Internals/            # Scripts used to build and validate the lab VM image
 ```
@@ -61,7 +68,7 @@ The lab is intentionally hands-on: every concept is paired with a runnable noteb
 - An **Azure subscription** with access to **Azure OpenAI** and **Azure HorizonDB**.
 - **Visual Studio Code** with the **Jupyter** and **PostgreSQL** extensions installed.
 - A **Python 3.11+** environment with the packages listed in [requirements.txt](requirements.txt):
-  - Database connectivity: `psycopg[binary]`
+  - Database connectivity: `psycopg[binary,pool]`
   - LLM and agent framework: `openai`, `agent-framework`
   - Long-term memory: `mem0`
   - Notebook compatibility: `jupyter`, `ipywidgets`, `nest_asyncio`
@@ -71,6 +78,15 @@ The lab is intentionally hands-on: every concept is paired with a runnable noteb
   - UI: `gradio`
 
 > **Note for lab attendees:** the provided lab VM already has Python, every package in [requirements.txt](requirements.txt), and all VS Code extensions pre-installed. You can jump straight to the notebooks.
+
+> **Working on this at home?** You will need to install the Python dependencies into your own environment. From the repo root:
+>
+> 1. Create a virtual environment:
+>    - Windows (PowerShell): `python -m venv .venv` then `.\.venv\Scripts\Activate.ps1`
+>    - macOS/Linux: `python3 -m venv .venv` then `source .venv/bin/activate`
+> 1. Upgrade pip: `python -m pip install --upgrade pip`
+> 1. Install the lab packages: `pip install -r requirements.txt`
+> 1. In VS Code, select the `.venv` interpreter for the notebooks (Command Palette > **Python: Select Interpreter**).
 
 ## Lab Sections
 
@@ -111,6 +127,35 @@ Optional troubleshooting cells: verify connectivity, inspect extension state, re
 1. Open [Code/1-data-setup.ipynb](Code/1-data-setup.ipynb) in VS Code and work through every cell top to bottom. Each cell pairs a `🧠 Technical Background Notes` block with a `📝 Tasks` checklist so you always know what to look at.
 1. Once Notebook 1 finishes successfully, open [Code/2-app-development.ipynb](Code/2-app-development.ipynb) and do the same.
 1. In Part 3.9, running the final cell launches the Gradio UI on [http://localhost:7860](http://localhost:7860). Open it in a browser and chat with your finished agent.
+
+## AZD Deployment Option
+
+If you want to work on this lab at home, this repo includes an `azd`-based deployment option so you can quickly provision the required resources in your own Azure subscription.
+
+- `azure.yaml` points `azd` to [Infra/main.bicep](Infra/main.bicep), which wraps the existing template and exposes deployment outputs as environment-friendly names.
+- A cross-platform post-provision hook runs automatically after `azd provision` and builds a local `.env` file in the repo root from the Bicep outputs plus an Azure OpenAI key lookup:
+  - Windows: [Scripts/azd/postprovision.ps1](Scripts/azd/postprovision.ps1)
+  - macOS/Linux: [Scripts/azd/postprovision.sh](Scripts/azd/postprovision.sh)
+
+The `.env` file is what the notebooks read for HorizonDB and Azure OpenAI connection details, so you do not need to copy values around by hand.
+
+> **Important: allow your IP on HorizonDB.** The post-provision hook does not configure HorizonDB networking. Before you can connect from your machine, open the deployed HorizonDB cluster in the Azure portal, go to **Settings > Networking**, and add a firewall rule that allow-lists your current public IP address. Without this step, notebook connections will fail with a network/timeout error.
+
+### One-Time Prerequisites
+
+1. Install Azure CLI and `azd`.
+1. Sign in:
+  - `az login`
+  - `azd auth login`
+
+### Deploy With AZD
+
+1. Initialize an environment name:
+  - `azd env new <environment-name>`
+1. Provision infrastructure and run post-provision hooks:
+  - `azd provision`
+
+After provisioning completes, your repo root `.env` is created/updated and is ready for notebooks.
 
 ## Additional Resources
 

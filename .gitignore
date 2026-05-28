@@ -2,3 +2,6 @@
 .env
 .env.*
 !.env.sample
+
+# azd local environment state
+.azure/

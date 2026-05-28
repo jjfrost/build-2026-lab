@@ -1,0 +1,14 @@
+name: build-2026-lab
+metadata:
+  template: build-2026-lab
+infra:
+  provider: bicep
+  path: Infra
+hooks:
+  postprovision:
+    windows:
+      shell: pwsh
+      run: Scripts/azd/postprovision.ps1
+    posix:
+      shell: sh
+      run: Scripts/azd/postprovision.sh
