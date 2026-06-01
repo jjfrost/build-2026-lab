@@ -15,6 +15,13 @@
             "name": "horizondb-learn-fv5vnr7dyldja",
             "type": "Microsoft.HorizonDb/clusters",
             "location": "australiaeast"
+        },
+        {
+            "id": "/subscriptions/3a17940d-343c-4116-bee4-208e75cced7a/resourceGroups/ResourceGroup1/providers/Microsoft.HorizonDB/parameterGroups/lab",
+            "name": "lab",
+            "type": "Microsoft.HorizonDB/parameterGroups",
+            "location": "australiaeast",
+            "tags": {}
         }
     ]
 }

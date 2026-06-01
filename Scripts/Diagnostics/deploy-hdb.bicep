@@ -21,7 +21,7 @@ var administratorLogin = 'labUser'
 
 @secure()
 @description('Auto-generated admin password.')
-param administratorLoginPassword string = 'Z${uniqueString(newGuid())}!'
+param administratorLoginPassword string = ''
 
 
 

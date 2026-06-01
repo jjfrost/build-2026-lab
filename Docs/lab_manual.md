@@ -8,17 +8,16 @@ Sign in to your VM with the following credentials:
 
 # Table of contents
 
-1. [Part 0 - Sign in to Azure and explore Azure resources](#part-0---sign-in-to-azure-and-explore-azure-resources)
+1.[Part 0 - Sign in to Azure and setup Azure resources](#part-0---sign-in-to-azure-and-setup-azure-resources)
 2. [Part 1 - Connect to your Azure HorizonDB database using VS Code Extension for PostgreSQL](#part-1---connect-to-your-azure-horizondb-database-using-vs-code-extension-for-postgresql)
     1. [Open VS Code and set up database connection to Azure PostgreSQL](#open-vs-code-and-set-up-database-connection-to-azure-postgresql)
     2. [Create Connection](#create-connection)
-    3. [Explore VS Code Extension for PostgreSQL Dashboard](#explore-vs-code-extension-for-postgresql-dashboard)
-    
+    3. [Explore VS Code Extension for PostgreSQL Dashboard](#explore-vs-code-extension-for-postgresql-dashboard)    
 3. [Part 2 and 3 - Data Setup and Agentic App Development](#part-2-and-3---data-setup-and-agentic-app-development)
 
 ===
 
-# Part 0 - Sign in to Azure and explore Azure resources
+# Part 0 - Sign in to Azure and setup Azure resources
 In this section, we'll open Edge browser in the lab environment and sign in to the Azure portal to review the Azure resources we will use in this lab.
 
 1. Double-select on the **Microsoft Azure Portal** icon on the desktop.
@@ -53,6 +52,48 @@ In this section, we'll open Edge browser in the lab environment and sign in to t
     - Azure HorizonDB database instance
 
 	!IMAGE[res-check.png](instructions342798/res-check.png)
+
+===
+
+In this section, we are going to allow-list the Postgres extensions we are going to use in this lab by creating a **Parameter Group** for HorizonDB.
+
+Parameter groups are a new concept in HorizonDB.  Parameter groups act as containers for cluster configuration values that can be applied to one or more database clusters. Instead of managing configuration settings for each cluster individually, you can define them in a parameter group and connect that group with multiple clusters to ensure consistency across your environment.  In our case, we only have one cluster in our lab, however, we need to still create a parameter group to enable the Postgres extensions we are going to use in our lab.
+
+Parameter groups are first-class resources in Azure and are surfaced within the specific resource group and subscription defined in their resource identifier.
+
+1. Click on the HorizonDB instance in the portal
+
+	!IMAGE[click-hdb-2.png](instructions342798/click-hdb-2.png)
+
+1. Expand **"Settings"** in the left navigation, and click **"Parameters"**
+
+	!IMAGE[click-parameters.png](instructions342798/click-parameters.png)
+
+1. Click the **"create"** link at the top of the page
+
+	!IMAGE[click-create.png](instructions342798/click-create.png)
+
+1. For **"Parameter group name"** enter **"lab"**, then click **Next**
+
+	!IMAGE[param-group-lab.png](instructions342798/param-group-lab.png)
+
+1. In the top filter bar type **"exten"** to bring **"azure.extensions"** to the top parameter to edit it
+
+    1. Click the drop down box next to **"azure.extensions"** and select the following extensions we are going to use in this lab:
+    
+	> age, pg_diskann, pg_fts, vector, azure_ai
+
+	1. Ensure your selections looks like the screen shot below.
+
+ 	!IMAGE[exten2.png](instructions342798/exten2.png)
+
+1. Again in the top filter bar, now type **"shared_pre"** to bring **"shared_preload_libraries"** to the top parameter to edit it
+
+	1. Click the drop down box next to **"shared_preload_libraries"**, and select the extension **"age"**
+    
+	1. Then click **"Create"**
+
+	!IMAGE[shared2.png](instructions342798/shared2.png)
 
 ===
 
