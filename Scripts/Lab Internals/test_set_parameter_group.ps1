@@ -236,7 +236,7 @@ try {
 }
 
 # ================== Poll cluster until parameter group is applied ============
-Write-Log "Waiting for cluster to apply parameter group..."
+Write-Log "Waiting for cluster to apply parameter group (syncStatus = InSync)..."
 $elapsed = 0
 $clusterState = ''
 $syncStatus   = ''
@@ -248,14 +248,15 @@ while ($elapsed -lt $maxWaitSec) {
         $clusterState = $clusterGet.properties.provisioningState
         $syncStatus   = $clusterGet.properties.parameterGroup.syncStatus
         Write-Log "  Cluster provisioning: $clusterState | parameterGroup.syncStatus: $syncStatus (elapsed ${elapsed}s)"
-        if ($clusterState -in @('Succeeded','Failed','Canceled')) { break }
+        if ($syncStatus -eq 'InSync') { break }
+        if ($clusterState -in @('Failed','Canceled')) { break }
     } catch {
         Write-Log "  GET cluster failed: $($_.Exception.Message)"
     }
 }
 
-if ($clusterState -ne 'Succeeded') {
-    throw "Cluster did not reach Succeeded state after attaching parameter group (last state: $clusterState)."
+if ($syncStatus -ne 'InSync') {
+    throw "Parameter group did not reach InSync on cluster (last syncStatus: '$syncStatus', provisioningState: '$clusterState')."
 }
 
 Write-Log "==== Set HorizonDB Parameter Group (local test) complete ===="
