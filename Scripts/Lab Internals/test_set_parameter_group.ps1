@@ -15,9 +15,9 @@
 #
 # What it does:
 #   1. Creates a HorizonDB parameter group via ARM REST that:
-#        - Allow-lists extensions: azure_ai, vector, age, pg_diskann, pg_fts
+#        - Allow-lists extensions: azure_ai, vector, age, pg_diskann, pg_textsearch
 #          (parameter: azure.extensions)
-#        - Enables AGE in shared_preload_libraries
+#        - Enables AGE and pg_textsearch in shared_preload_libraries
 #   2. Attaches the parameter group to the HorizonDB cluster via PATCH.
 #
 # Usage examples:
@@ -32,8 +32,8 @@ param(
     [string]$ResourceGroupName,
     [string]$ClusterName,
     [string]$ParameterGroupName = 'lab-paramgroup',
-    [string[]]$AllowedExtensions = @('azure_ai','vector','age','pg_diskann','pg_fts'),
-    [string[]]$PreloadLibraries  = @('age'),
+    [string[]]$AllowedExtensions = @('azure_ai','vector','age','pg_diskann','pg_textsearch'),
+    [string[]]$PreloadLibraries  = @('age','pg_textsearch'),
     [string]$HorizonApiVersion   = '2026-01-20-preview',
     [bool]$ApplyImmediately      = $true
 )
@@ -157,7 +157,7 @@ Write-Log "shared_preload_libraries  = $preloadValue"
 $pgBody = @{
     location   = $clusterLocation
     properties = @{
-        description       = 'Lab parameter group: allow-listed extensions and AGE preload'
+        description       = 'Lab parameter group: allow-listed extensions and required preloads'
         pgVersion         = $pgVersion
         applyImmediately  = $ApplyImmediately
         parameters        = @(

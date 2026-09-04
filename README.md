@@ -19,7 +19,7 @@ The lab is intentionally hands-on: every concept is paired with a runnable noteb
 ## What You'll Build
 
 - A **Microsoft Agent Framework** agent that can reason over U.S. case law stored in Azure HorizonDB.
-- **Hybrid retrieval**: BM25 full-text search (`pg_fts`) combined with vector similarity search (`pgvector` + `pg_diskann` for ANN with advanced filtering).
+- **Hybrid retrieval**: BM25 full-text search (`pg_textsearch`) combined with vector similarity search (`pgvector` + `pg_diskann` for ANN with advanced filtering).
 - **GraphRAG** over a citation graph built with **Apache AGE**, letting the agent expand from anchor cases to surrounding precedents in a single Cypher-style traversal.
 - **In-database entity extraction** with the `azure_ai` extension, so structured fields (`holding`, `issues`, `statutes_cited`, `disposition`) are pulled directly inside Postgres instead of round-tripping opinions back to the application.
 - **External evidence ingestion** through a tool that calls the Open-Meteo weather archive API.
@@ -28,7 +28,7 @@ The lab is intentionally hands-on: every concept is paired with a runnable noteb
 
 ## Key Technologies
 
-- **Azure HorizonDB**: managed Postgres with a rich AI extension surface (`vector`, `pg_diskann`, `pg_fts`, `azure_ai`, `age`).
+- **Azure HorizonDB**: managed Postgres with a rich AI extension surface (`vector`, `pg_diskann`, `pg_textsearch`, `azure_ai`, `age`).
 - **Microsoft Agent Framework**: open-source SDK for building tool-using agents (`OpenAIChatClient`, `@tool` decorator, `client.as_agent(...)`).
 - **Azure OpenAI**: GPT chat deployment for the agent and `text-embedding-3-small` (1536 dims) for case and memory embeddings.
 - **Apache AGE**: property-graph engine inside Postgres for the citation graph (`(:case)-[:REF]->(:case)`).
@@ -94,10 +94,10 @@ The lab is delivered as two notebooks that build on each other.
 
 ### Notebook 1: Data Setup ([Code/1-data-setup.ipynb](Code/1-data-setup.ipynb))
 
-1. **Connect to Azure HorizonDB** and enable the AI extensions (`vector`, `pg_diskann`, `pg_fts`, `age`, `azure_ai`).
+1. **Connect to Azure HorizonDB** and enable the AI extensions (`vector`, `pg_diskann`, `pg_textsearch`, `age`, `azure_ai`).
 1. **Load the case-law corpus** from [Dataset/cases.csv](Dataset/cases.csv) into a clean relational schema.
 1. **Generate 1536-dim embeddings** for every opinion with Azure OpenAI and store them in a `vector(1536)` column.
-1. **Build the retrieval indexes**: a BM25 index with `pg_fts`, and a DiskANN ANN index over the opinion vectors.
+1. **Build the retrieval indexes**: a BM25 index with `pg_textsearch`, and a DiskANN ANN index over the opinion vectors.
 1. **Build the citation graph** with Apache AGE so each case becomes a `(:case)` node and every citation an edge.
 1. **Register Azure OpenAI** with the `azure_ai` extension so later notebooks can call `azure_ai.extract(...)` directly from SQL.
 
@@ -108,7 +108,7 @@ By the end of Notebook 1 you have one Postgres database serving relational, vect
 Each tool is introduced, smoke-tested by hand, and then handed to the agent so you can compare the raw output to the agent's narrative answer.
 
 1. **Setup and configuration** (Part 3.1).
-1. **Tool 1: `keyword_case_search`** (Part 3.2): BM25 full-text retrieval through `pg_fts`. Assemble your first single-tool agent.
+1. **Tool 1: `keyword_case_search`** (Part 3.2): BM25 full-text retrieval through `pg_textsearch`. Assemble your first single-tool agent.
 1. **Tool 2: `semantic_case_search`** (Part 3.3): pgvector similarity search with DiskANN advanced filtering, then re-assemble the agent with two tools.
 1. **Tool 3: `precedent_graph_search`** (Part 3.4): Cypher-style traversal of the AGE citation graph from BM25 + vector anchor cases. Re-assemble with three tools.
 1. **Tool 4: `case_analyst_extract`** (Part 3.5): in-database extraction with `azure_ai.extract` to pull `holding`, `issues`, `statutes_cited`, `disposition` from full opinions. Re-assemble with four tools.
