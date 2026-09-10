@@ -81,7 +81,7 @@ Parameter groups are first-class resources in Azure and are surfaced within the 
 
     1. Click the drop down box next to **"azure.extensions"** and select the following extensions we are going to use in this lab:
     
-	> age, pg_diskann, pg_fts, vector, azure_ai
+	> age, pg_diskann, pg_textsearch, vector, azure_ai
 
 	1. Ensure your selections looks like the screen shot below.
 
@@ -89,7 +89,7 @@ Parameter groups are first-class resources in Azure and are surfaced within the 
 
 1. Again in the top filter bar, now type **"shared_pre"** to bring **"shared_preload_libraries"** to the top parameter to edit it
 
-	1. Click the drop down box next to **"shared_preload_libraries"**, and select the extension **"age"**
+	1. Click the drop down box next to **"shared_preload_libraries"**, and select the extensions **"age"** and **"pg_textsearch"**
     
 	1. Then click **"Create"**
 

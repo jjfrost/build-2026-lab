@@ -25,9 +25,9 @@
 #   3. Reads the outputs of the most recent successful 'lab-*' ARM deployment
 #      in the resource group to obtain the HorizonDB cluster name and version.
 #   4. Creates a HorizonDB parameter group via ARM REST that:
-#        - Allow-lists extensions: azure_ai, vector, age, pg_diskann, pg_fts
+#        - Allow-lists extensions: azure_ai, vector, age, pg_diskann, pg_textsearch
 #          (parameter: azure.extensions)
-#        - Enables AGE in shared_preload_libraries
+#        - Enables AGE and pg_textsearch in shared_preload_libraries
 #   5. Attaches the parameter group to the HorizonDB cluster via PATCH.
 #
 # Docs:
@@ -68,10 +68,10 @@ $parameterGroupName = "lab-paramgroup"
 $applyImmediately   = $true
 
 # Extensions to allow-list (azure.extensions, comma-separated, no spaces)
-$allowedExtensions  = @('azure_ai','vector','age','pg_diskann','pg_fts')
+$allowedExtensions  = @('azure_ai','vector','age','pg_diskann','pg_textsearch')
 
 # Libraries to enable in shared_preload_libraries (comma-separated, no spaces)
-$preloadLibraries   = @('age')
+$preloadLibraries   = @('age','pg_textsearch')
 
 # ================== Acquire ARM token (client credentials) ===================
 Write-Log "Requesting ARM access token..."
@@ -157,7 +157,7 @@ Write-Log "shared_preload_libraries  = $preloadValue"
 $pgBody = @{
     location   = $clusterLocation
     properties = @{
-        description       = 'Lab parameter group: allow-listed extensions and AGE preload'
+        description       = 'Lab parameter group: allow-listed extensions and required preloads'
         pgVersion         = $pgVersion
         applyImmediately  = $applyImmediately
         parameters        = @(
